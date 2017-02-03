@@ -207,7 +207,22 @@
         [taskCell.checkButton setImage:[UIImage imageNamed:@"unselectedCircle"] forState:UIControlStateNormal];
         [taskCell.checkButton.layer addAnimation:transition forKey:@"transition"];
         //convert the date
-        [taskCell.dateLabel setAttributedText: [self addSpacing:1.7 forString:[NSString stringWithFormat:@"DUE: %@", [self.dateFormatter stringFromDate:[self.longDateFormatter dateFromString:task.due]]]]];
+        NSMutableAttributedString *muttDue = [[self addSpacing:1.7 forString:[NSString stringWithFormat:@"DUE: %@", [self.dateFormatter stringFromDate:[self.longDateFormatter dateFromString:task.due]]]]mutableCopy];
+        
+        NSDate *today = [NSDate date];
+        NSDate *dueDate = [self.longDateFormatter dateFromString:task.due];
+        
+        NSTimeInterval timeBetween = [dueDate timeIntervalSinceDate:today];
+        double secondsInHour = 3600;
+        NSInteger hours = timeBetween/secondsInHour;
+        
+        if (hours <= 24) {
+            //need to turn the duedate red
+            NSDictionary *atts = @{NSForegroundColorAttributeName:[UIColor colorWithRed:255.0f/255.0f green:0 blue:80.0f/255.0f alpha:1]};
+            [muttDue addAttributes:atts range:NSMakeRange(0, muttDue.length)];
+        }
+        
+        [taskCell.dateLabel setAttributedText:muttDue];
         [taskCell.dateLabel.layer addAnimation:transition forKey:@"transition"];
         
         
